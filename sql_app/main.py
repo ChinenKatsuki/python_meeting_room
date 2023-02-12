@@ -61,3 +61,7 @@ async def update_user(user_id: int, user: schemas.UserCreate, db: Session = Depe
 @app.get("/room/delete/{room_id}")
 async def delete_room(room_id: int, db: Session = Depends(get_db)):
     return crud.delete_room(room_id=room_id, db=db)
+
+@app.post("/login", response_model=schemas.User)
+async def login_user(user: schemas.Userlogin, db: Session = Depends(get_db)):
+    return crud.login_user(user=user, db=db)

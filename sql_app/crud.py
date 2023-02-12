@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from . import schemas, models
 from fastapi import HTTPException
 import datetime
+import hashlib
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
@@ -71,3 +72,11 @@ def delete_room(db: Session, room_id: None):
     db_room.delete()
     db.commit()
     return {'delete': 'Success'}
+
+def login_user(db: Session, user: schemas.Userlogin):
+    password_check_hash = hashlib.sha256(user.password.encode()).hexdigest()
+    result = db.query(models.User.user_id, models.User.username).\
+        filter(models.User.username == user.username).\
+        filter(models.User.password == password_check_hash).first()
+    if result:
+        return result
