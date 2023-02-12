@@ -80,3 +80,5 @@ def login_user(db: Session, user: schemas.Userlogin):
         filter(models.User.password == password_check_hash).first()
     if result:
         return result
+    else:
+        raise HTTPException(status_code=404, detail="User does not exist")

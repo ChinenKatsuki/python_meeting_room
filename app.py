@@ -255,3 +255,5 @@ elif page == 'user_login':
             if res.status_code == 200:
                 user = res.json()
                 st.success(f"ようこそ{user['username']}さん")
+            elif res.status_code == 404:
+                st.error('ユーザー情報が存在しません')
