@@ -42,7 +42,7 @@ async def read_user_detail(user_id: int, db: Session = Depends(get_db)):
     user = crud.get_user_detail(db, user_id=user_id)
     return user
 
-@app.post("/users", response_model=schemas.User)
+@app.post("/users")
 async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
@@ -53,11 +53,6 @@ async def create_room(room: schemas.RoomCreate, db: Session = Depends(get_db)):
 @app.post("/bookings", response_model=schemas.Booking)
 async def create_booking(booking: schemas.BookingCreate, db: Session = Depends(get_db)):
     return crud.create_booking(db=db, booking=booking)
-
-@app.post("/user/{user_id}", response_model=schemas.User)
-async def update_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
-    return crud.update_user(user_id=user_id, user=user, db=db)
-
 
 @app.post("/user/{user_id}", response_model=schemas.User)
 async def update_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
