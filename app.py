@@ -3,28 +3,33 @@ import requests
 import json
 import datetime
 import pandas as pd
-import time
+import hashlib
+from sql_app import crud
 
 
-page = st.sidebar.selectbox('choose your page', ['users', 'rooms', 'bookings', 'user_detail', 'room_delete'])
+page = st.sidebar.selectbox('choose your page', ['user_login', 'users', 'rooms', 'bookings', 'user_detail', 'room_delete'])
 
 if page == 'users':
 
     st.title('ユーザー登録画面')
     with st.form(key='user'):
         username: str = st.text_input('ユーザー名', max_chars=12)
+        password: str = st.text_input('パスワード', max_chars=12)
         data = {
-            'username': username
+            'username': username,
+            'password': password,
         }
         submit_button = st.form_submit_button(label='リクエスト送信')
 
         if submit_button:
+            data['password'] = hashlib.sha256(data['password'].encode("utf-8")).hexdigest()
             url = 'http://127.0.0.1:8000/users'
             res = requests.post(
                 url,
                 data=json.dumps(data)
             )
             if res.status_code == 200:
+                st.json(res.json())
                 st.success('登録成功')
     
 elif page =='rooms':
@@ -228,5 +233,27 @@ elif page == 'room_delete':
             if res.status_code == 200:
                 st.json(res.json())
                 st.success('削除成功')
-           
-            
+
+elif page == 'user_login':
+    st.title('ログイン')
+    with st.form(key='user_login'):
+        username = st.text_input('ユーザー名', max_chars=12)
+        password = st.text_input('パスワード', max_chars=12)
+        data = {
+            'username': username,
+            'password': password
+        }
+        submit_button = st.form_submit_button(label='ログイン')
+        
+        if submit_button:
+            url = 'http://127.0.0.1:8000/login'
+            res = requests.post(
+                url,
+                data=json.dumps(data)
+            )
+            st.write(res.status_code)
+            if res.status_code == 200:
+                user = res.json()
+                st.success(f"ようこそ{user['username']}さん")
+            elif res.status_code == 404:
+                st.error('ユーザー情報が存在しません')

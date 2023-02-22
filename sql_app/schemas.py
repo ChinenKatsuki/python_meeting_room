@@ -15,9 +15,15 @@ class Booking(BookingCreate):
 
 class UserCreate(BaseModel):
     username: str = Field(max_length=12)
+    password: str = Field(max_length=255)
 
-class User(UserCreate):
+class Userlogin(BaseModel):
+    username: str = Field(max_length=12)
+    password: str = Field(max_length=12)
+
+class User(BaseModel):
     user_id: int
+    username: str
     class Config:
         orm_mode = True
 
